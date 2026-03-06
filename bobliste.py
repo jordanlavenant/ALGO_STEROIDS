@@ -100,14 +100,72 @@ def getElement(L, i):
         current = current.next
     return current.val
 
-def insertSorted(L,v):
+def insertSorted(L, v):
     ''' Insertion de la valeur v dans une Bobliste triée
     Input: L, une Bobliste triée ; v, une valeur correspondant au type interne des cases de L
     Output: pas d'output ; on modifie L en place en insérant une case de valeur v
             au bon endroit pour qu'elle reste triée.
     '''
-    # TODO
-    return
+
+    # Liste vide ou insertion en tête
+    if L.head is None or v <= L.head.val:
+        add(L, v)
+        return
+
+    best_cell = L.head
+
+    bob = L.bobhead
+    # k est le compteur décrémental du parcours de la liste secondaire (initialiser au bobhead)
+    k = isqrt(L.n)
+
+    while bob is not None and k >= 1:
+        # Si la valeur de la bobcase est inférieure à v, on continue à parcourir
+        if bob.val.val < v:
+            best_cell = bob.val
+            bob = bob.next
+            # Prochain indice
+            k -= 1
+        else:
+            break
+
+    prev = best_cell
+    current = best_cell.next
+
+    while current is not None:
+        # Si la valeur de la bobcase est inférieure à v, on continue à parcourir
+        if current.val < v:
+            prev = current
+            current = current.next
+        else:
+            break
+
+    # Insertion de la nouvelle case
+    new_cell = Cell(v)
+    new_cell.next = current
+    prev.next = new_cell
+    L.n += 1
+
+    # Mise à jour de la bobliste
+    k_prec = isqrt(L.n - 1)
+    k_new = isqrt(L.n)
+
+    # Si k_new > k_prec, on ajoute une nouvelle bobcase en tête
+    if k_new > k_prec:
+        new_bobcell = Cell(L.head)
+        new_bobcell.next = L.bobhead
+        L.bobhead = new_bobcell
+
+    bob = L.bobhead
+
+    # Sauter la nouvelle bobcase déjà correcte
+    if k_new > k_prec:
+        bob = bob.next
+
+    while bob is not None:
+        # Décalage vers la case suivante pour les bobcases pointant les cases ayant une valeur inférieure à la v insérée
+        if bob.val.val < v:
+            bob.val = bob.val.next
+        bob = bob.next
 
 
 #############################
@@ -189,5 +247,5 @@ if __name__ == '__main__':
     # Exécution des tests (vous pouvez commenter ceux qui concernent une partie pas encore implémentée)
     test1()
     test2()
-    # test3()
-    # test4()
+    test3()
+    test4()
