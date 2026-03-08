@@ -106,7 +106,6 @@ def insertSorted(L, v):
     Output: pas d'output ; on modifie L en place en insérant une case de valeur v
             au bon endroit pour qu'elle reste triée.
     '''
-
     # Liste vide ou insertion en tête
     if L.head is None or v <= L.head.val:
         add(L, v)

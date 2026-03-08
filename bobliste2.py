@@ -39,24 +39,75 @@ def add(L,v):
     Input: L, une Bobliste
     Output: pas d'output ; on ajoute en place une case de valeur v en tête de L
     '''
-    # TODO
-    return
+    new_cell = Cell2(v)
+    # Insertion dans la liste principale & incrémentation de la taille
+    if L.head is not None:
+        L.head.prev = new_cell # Mise à jour du pointeur "prev" de l'ancienne tête
+        new_cell.next = L.head # Mise à jour du pointeur "next" de la nouvelle tête
+
+    L.head = new_cell
+    L.n += 1
+
+    # Si la nouvelle longueur de L est un carré parfait, on ajoute une nouvelle bobcell
+    if isqrt(L.n) ** 2 == L.n:
+        new_bobcell = Cell2(new_cell) # Nouveau bobcell, avec le pointeur vers la cell standart
+        new_bobcell.next = L.bobhead
+        L.bobhead = new_bobcell
     
 def pop(L):
     ''' Supprime la première case de L
     Input: L, une Bobliste
     Output: La valeur de la première case de L si elle existe, None sinon. 
     '''
-    # TODO
-    return
+    if L.head is None:
+        return None
+
+    cell = L.head
+    # Mise à jour de la tête de la liste principale
+    L.head = cell.next # Prochaine case ou "None" si elle n'existe pas
+    L.head.prev = None # Mise à jour du pointeur "prev" de la nouvelle tête
+    L.n -= 1
+
+    # Mise à jour de la liste secondaire
+    if L.bobhead is not None and L.bobhead.val == cell:
+        L.bobhead = L.bobhead.next # Prochaine bobcase ou "None" si elle n'existe pas
+        L.bobhead.prev = None # Mise à jour du pointeur "prev" de la nouvelle tête de bobliste
+
+    return cell
     
 def getElement(L,i):
     ''' Accès à la i-ème case de L
     Input: L, une Bobliste
     Output: La valeur de la case en position i dans L si elle existe, None sinon.
     '''
-    # TODO
-    return
+    if i < 0 or i >= L.n:
+        return None
+
+    best_cell = L.head
+    best_index = 0
+
+    bob = L.bobhead
+    # k est le compteur décrémental du parcours de la liste secondaire (initialiser au bobhead)
+    k = isqrt(L.n)
+
+    while bob is not None and k >= 1:
+        # Accès à la position i via le parcours de la bobliste
+        curr_i = L.n - (k**2)
+
+        # Si le curr_index est supérieur à i recherché, on s'arrête
+        if curr_i > i:
+            break
+
+        best_cell = bob.val
+        best_index = curr_i
+        bob = bob.next
+        # Prochain indice
+        k -= 1
+
+    current = best_cell
+    for _ in range(i - best_index):
+        current = current.next
+    return current.val
 
 def insertSorted(L,v):
     ''' Insertion de la valeur v dans une Bobliste triée
@@ -64,16 +115,149 @@ def insertSorted(L,v):
     Output: pas d'output ; on modifie L en place en insérant une case de valeur v
             au bon endroit pour qu'elle reste triée.
     '''
-    # TODO
-    return
+    # Liste vide ou insertion en tête
+    if L.head is None or v <= L.head.val:
+        add(L, v)
+        return
+
+    best_cell = L.head
+
+    bob = L.bobhead
+    # k est le compteur décrémental du parcours de la liste secondaire (initialiser au bobhead)
+    k = isqrt(L.n)
+
+    while bob is not None and k >= 1:
+        # Si la valeur de la bobcase est inférieure à v, on continue à parcourir
+        if bob.val.val < v:
+            best_cell = bob.val
+            bob = bob.next
+            # Prochain indice
+            k -= 1
+        else:
+            break
+
+    prev = best_cell
+    current = best_cell.next
+
+    while current is not None:
+        # Si la valeur de la bobcase est inférieure à v, on continue à parcourir
+        if current.val < v:
+            prev = current
+            current = current.next
+        else:
+            break
+
+    # Insertion de la nouvelle case
+    new_cell = Cell(v)
+    new_cell.next = current
+    new_cell.prev = prev
+    prev.next = new_cell
+    if current:
+        current.prev = new_cell
+    L.n += 1
+
+    # Mise à jour de la bobliste
+    k_prec = isqrt(L.n - 1)
+    k_new = isqrt(L.n)
+
+    # Si k_new > k_prec, on ajoute une nouvelle bobcase en tête
+    if k_new > k_prec:
+        new_bobcell = Cell(L.head)
+        new_bobcell.next = L.bobhead
+        L.bobhead = new_bobcell
+
+    bob = L.bobhead
+
+    # Sauter la nouvelle bobcase déjà correcte
+    if k_new > k_prec:
+        bob = bob.next
+
+    while bob is not None:
+        # Décalage vers la case suivante pour les bobcases pointant les cases ayant une valeur inférieure à la v insérée
+        if bob.val.val < v:
+            bob.val = bob.val.next
+        bob = bob.next
     
 def remove(L,v):
     ''' Suppression de la première case de valeur v dans une Bobliste triée
     Input: L, une Bobliste triée ; v, une valeur correspondant au type interne des cases de L
     Output: True si une case de valeur v a été trouvée puis supprimée, False sinon (L reste inchangée)
     '''
-    # TODO
-    return
+    # Liste vide
+    if L.head is None:
+        return False
+
+    # Suppression de la tête si elle a la valeur v
+    if L.head.val == v:
+        pop(L)
+
+        # Mise à jour de la bobliste
+        k_prec = isqrt(L.n + 1)
+        k_new = isqrt(L.n)
+
+        if k_new < k_prec:
+            L.bobhead = L.bobhead.next
+            if L.bobhead:
+                L.bobhead.prev = None
+
+        return True
+
+    # Recherche de la case à supprimer
+    best_cell = L.head
+
+    bob = L.bobhead
+    # k est le compteur décrémental du parcours de la liste secondaire (initialiser au bobhead)
+    k = isqrt(L.n)
+
+    while bob is not None and k >= 1:
+        # Si la valeur de la bobcase est inférieure à v, on continue à parcourir
+        if bob.val.val < v:
+            best_cell = bob.val
+            bob = bob.next
+            # Prochain indice
+            k -= 1
+        else:
+            break
+
+    prev = best_cell
+    current = best_cell.next
+
+    while current is not None:
+        # Si la valeur de la bobcase est inférieure à v, on continue à parcourir
+        if current.val < v:
+            prev = current
+            current = current.next
+        else:
+            break
+    
+    # Suppression de la case de valeur v si elle existe
+    if current is not None and current.val == v:
+        prev.next = current.next
+        if current.next:
+            current.next.prev = prev
+        L.n -= 1
+
+        # Mise à jour de la bobliste
+        k_prec = isqrt(L.n + 1)
+        k_new = isqrt(L.n)
+
+        # Si k_new < k_prec, on supprime la bobcase en tête
+        if k_new < k_prec:
+            L.bobhead = L.bobhead.next
+            if L.bobhead:
+                L.bobhead.prev = None
+
+        bob = L.bobhead
+
+        while bob is not None:
+            # Décalage vers la case précédente pour les bobcases pointant les cases ayant une valeur inférieure à la v supprimée
+            if bob.val.val < v:
+                bob.val = bob.val.prev
+            bob = bob.next
+        
+        return True
+    return False
+
 
 #############################
 # Fonctions de vérification #
