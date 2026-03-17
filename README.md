@@ -1,4 +1,4 @@
-# Liste chaînées sousb stéroïdes
+# Liste chaînées sous stéroïdes
 
 LAVENANT Jordan - APP3 IIM
 
@@ -79,3 +79,43 @@ Pour l'implémentation de la fonction `insertSorted`, voici une explication de l
   - Enfin, nous devons mettre à jour les pointeurs des _bobcase_ pointant vers les _case_ ayant des valeurs inférieures à `v` (seul celles-ci sont affectées par l'insertion de `v`). Elles doivent ainsi pointer vers la _case_ suivante leur ancien pointeur, pour maintenir la validité de la bobliste (cf. [Dessin d'insertions](#4)).
 
 ## 6.
+
+### Add
+
+Pour la fonction `add`, j'ai conservé l'implémentation originale, en intégrant des modifications :
+
+- On met à jour le pointeur `prev` de la tête actuelle, par la nouvelle cellule.
+
+La complexité de ma fonction est toujours de $O(1)$, car nous effectuons un nombre constant d'opérations pour ajouter un élément à la tête de la liste, indépendamment de la taille de la liste.
+
+### Pop
+
+Pour la fonction `pop`, j'ai conservé l'implémentation originale, en intégrant des modifications :
+
+- On met à jour le pointeur `prev` de la nouvelle tête de la liste, pour qu'il soit égal à `None`, afin de maintenir la validité de la liste doublement chaînée.
+- On met également à jour le pointeur `prev` de la _bobhead_ de la liste secondaire, pour qu'il soit égal à `None` si la _bobcase_ pointait vers la _case_ que nous venons de supprimer, afin de maintenir la validité de la bobliste.
+
+La complexité de ma fonction est toujours de $O(1)$, car nous effectuons un nombre constant d'opérations pour supprimer un élément de la tête de la liste, indépendamment de la taille de la liste.
+
+### GetElement
+
+Pour la fonction `getElement`, j'ai conservé l'implémentation originale.
+
+La complexité de ma fonction est toujours de $O(\sqrt{n})$, car nous parcourons au maximum les _bobcases_ (qui sont au nombre de $\lfloor\sqrt{n}\rfloor$) et ensuite nous parcourons la liste principale à partir de la _case_ associée à la meilleure _bobcase_, ce qui peut nécessiter de parcourir au maximum $\sqrt{n}$ éléments dans le pire des cas.
+
+### InsertSorted
+
+Pour la fonction `insertSorted`, j'ai conservé l'implémentation originale, en intégrant des modifications :
+
+- On met à jour le pointeur `prev` de la _case_ insérée, pour qu'il pointe vers la _case_ précédente à sa position d'insertion, afin de maintenir la validité de la liste doublement chaînée.
+- On met également à jour la _case_ suivante de la _case_ insérée, pour que son pointeur `prev` pointe vers la _case_ insérée, afin de maintenir la validité de la liste doublement chaînée.
+
+### Remove
+
+Pour l'implémentation de la fonction `remove`, voici une explication de la logique que j'ai suivie :
+
+- J'ai utilisé la même logique de parcours que pour la fonction `insertSorted`, pour trouver la position de l'élément à supprimer (c'est-à-dire la première _case_ dont la valeur est égale à `v`).
+- Une fois que nous avons trouvé la _case_ à supprimer, nous mettons à jour les pointeurs `next` et `prev` des _case_ précédentes et suivantes pour exclure la _case_ supprimée de la liste, en maintenant la validité de la liste doublement chaînée.
+- Je met ensuite à jour la bobliste, dû au changement d'état de la liste principale.
+  - Nous devons également vérifier si la suppression de `v` a entraîné une diminution du seuil d'ajout de _bobcases_. Si le nombre de _bobcases_ doit être réduit (c'est-à-dire si $\lfloor\sqrt{n-1}\rfloor^2 < \lfloor\sqrt{n}\rfloor^2$), nous devons supprimer la première _bobcase_ de la liste secondaire.
+  - Enfin, nous devons mettre à jour les pointeurs des _bobcases_ pointant vers les _cases_ ayant des valeurs inférieures à `v` (seules celles-ci sont affectées par la suppression de `v`). Elles doivent pointer vers la _case_ précédente de leur ancien pointeur, pour maintenir la validité de la bobliste.
