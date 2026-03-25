@@ -18,7 +18,7 @@ Pour l'implémentation de la fonction `getElement`, voici une explication de la 
   - Pour obtenir l'index de la _bobcase_, on utilise la formule mentionnée précédemment, qui nous donne l'indice de la case pointée par la _bobcase_, puis on décrémente cet indice à chaque itération pour suivre la progression dans la liste.
 - Une fois que nous avons trouvé la meilleure _bobcase_ (celle dont l'indice est le plus proche de `i` sans le dépasser), nous continuons à parcourir la liste principale à partir de la _case_ associée à notre _bobcase_, pour trouver l'élément à l'index `i`.
 
-La complexité de cet algorithme est de $O(\sqrt{n})$ dans le pire car il y a exactement $k = \lfloor\sqrt{n}\rfloor$ _bobcases_ à parcourir.
+La complexité de cet algorithme est de $\theta(\sqrt{n})$ dans le pire car il y a exactement $k = \lfloor\sqrt{n}\rfloor$ _bobcases_ à parcourir.
 
 ## 2.
 
@@ -86,7 +86,7 @@ Pour la fonction `add`, j'ai conservé l'implémentation originale, en intégran
 
 - On met à jour le pointeur `prev` de la tête actuelle, par la nouvelle cellule.
 
-La complexité de ma fonction est toujours de $O(1)$, car nous effectuons un nombre constant d'opérations pour ajouter un élément à la tête de la liste, indépendamment de la taille de la liste.
+La complexité de ma fonction est toujours de $\theta(1)$, car nous effectuons un nombre constant d'opérations pour ajouter un élément à la tête de la liste, indépendamment de la taille de la liste.
 
 ### Pop
 
@@ -95,13 +95,13 @@ Pour la fonction `pop`, j'ai conservé l'implémentation originale, en intégran
 - On met à jour le pointeur `prev` de la nouvelle tête de la liste, pour qu'il soit égal à `None`, afin de maintenir la validité de la liste doublement chaînée.
 - On met également à jour le pointeur `prev` de la _bobhead_ de la liste secondaire, pour qu'il soit égal à `None` si la _bobcase_ pointait vers la _case_ que nous venons de supprimer, afin de maintenir la validité de la bobliste.
 
-La complexité de ma fonction est toujours de $O(1)$, car nous effectuons un nombre constant d'opérations pour supprimer un élément de la tête de la liste, indépendamment de la taille de la liste.
+La complexité de ma fonction est toujours de $\theta(1)$, car nous effectuons un nombre constant d'opérations pour supprimer un élément de la tête de la liste, indépendamment de la taille de la liste.
 
 ### GetElement
 
 Pour la fonction `getElement`, j'ai conservé l'implémentation originale.
 
-La complexité de ma fonction est toujours de $O(\sqrt{n})$, car nous parcourons au maximum les _bobcases_ (qui sont au nombre de $\lfloor\sqrt{n}\rfloor$) et ensuite nous parcourons la liste principale à partir de la _case_ associée à la meilleure _bobcase_, ce qui peut nécessiter de parcourir au maximum $\sqrt{n}$ éléments dans le pire des cas.
+La complexité de ma fonction est toujours de $\theta(\sqrt{n})$, car nous parcourons au maximum les _bobcases_ (qui sont au nombre de $\lfloor\sqrt{n}\rfloor$) et ensuite nous parcourons la liste principale à partir de la _case_ associée à la meilleure _bobcase_, ce qui peut nécessiter de parcourir au maximum $\sqrt{n}$ éléments dans le pire des cas.
 
 ### InsertSorted
 
@@ -109,6 +109,8 @@ Pour la fonction `insertSorted`, j'ai conservé l'implémentation originale, en 
 
 - On met à jour le pointeur `prev` de la _case_ insérée, pour qu'il pointe vers la _case_ précédente à sa position d'insertion, afin de maintenir la validité de la liste doublement chaînée.
 - On met également à jour la _case_ suivante de la _case_ insérée, pour que son pointeur `prev` pointe vers la _case_ insérée, afin de maintenir la validité de la liste doublement chaînée.
+
+La complexité de ma fonction est toujours de $\theta(\sqrt{n})$, car nous parcourons au maximum les _bobcases_ (qui sont au nombre de $\lfloor\sqrt{n}\rfloor$) et ensuite nous parcourons la liste principale à partir de la _case_ associée à la meilleure _bobcase_, ce qui peut nécessiter de parcourir au maximum $\sqrt{n}$ éléments dans le pire des cas.
 
 ### Remove
 
@@ -119,3 +121,5 @@ Pour l'implémentation de la fonction `remove`, voici une explication de la logi
 - Je met ensuite à jour la bobliste, dû au changement d'état de la liste principale.
   - Nous devons également vérifier si la suppression de `v` a entraîné une diminution du seuil d'ajout de _bobcases_. Si le nombre de _bobcases_ doit être réduit (c'est-à-dire si $\lfloor\sqrt{n-1}\rfloor^2 < \lfloor\sqrt{n}\rfloor^2$), nous devons supprimer la première _bobcase_ de la liste secondaire.
   - Enfin, nous devons mettre à jour les pointeurs des _bobcases_ pointant vers les _cases_ ayant des valeurs inférieures à `v` (seules celles-ci sont affectées par la suppression de `v`). Elles doivent pointer vers la _case_ précédente de leur ancien pointeur, pour maintenir la validité de la bobliste.
+
+La complexité de ma fonction est toujours de $\theta(\sqrt{n})$, car nous parcourons au maximum les _bobcases_ (qui sont au nombre de $\lfloor\sqrt{n}\rfloor$) et ensuite nous parcourons la liste principale à partir de la _case_ associée à la meilleure _bobcase_, ce qui peut nécessiter de parcourir au maximum $\sqrt{n}$ éléments dans le pire des cas.
